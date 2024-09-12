@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <link rel="stylesheet" href="chat.css">
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="message-input" placeholder="Typ je bericht...">
+        <button id="send-button">Verstuur</button>
+    </div>
+    <script src="chat.js"></script>
+</body>
+</html>
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+  import { getDatabase, ref, push, set, onChildAdded } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6URdyAWqjfdNXNV80Y4fPOdmkIu0vXDo",
+    authDomain: "bamischijf-aa0b3.firebaseapp.com",
+    projectId: "bamischijf-aa0b3",
+    storageBucket: "bamischijf-aa0b3.appspot.com",
+    messagingSenderId: "215325015609",
+    appId: "1:215325015609:web:3aab4ccc37546a75fb57e8",
+    measurementId: "G-HRFTH7GBE8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  document.getElementById('send-button').addEventListener('click', () => {
+    const message = document.getElementById('message-input').value;
+    if (message) {
+      set(push(ref(database, 'messages')), {
+        message: message
+      });
+      document.getElementById('message-input').value = '';
+    }
+  });
+
+  onChildAdded(ref(database, 'messages'), (snapshot) => {
+    const message = snapshot.val().message;
+    const div = document.createElement('div');
+    div.textContent = message;
+    document.getElementById('chat-box').appendChild(div);
+    document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+  });
+</script>
